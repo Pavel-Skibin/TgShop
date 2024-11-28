@@ -82,17 +82,8 @@ async def update_total_sum(callback: CallbackQuery, session: AsyncSession, state
 
 async def handle_payment_confirmation(callback: CallbackQuery, session: AsyncSession, user_id: int):
     try:
-        last_unpaid_payment = await session.execute(
-            select(Payment)
-            .where(
-                Payment.user_id == user_id,
-                Payment.is_paid == False
-            )
-            .order_by(Payment.date.desc())
-            .limit(1)
-        )
+        last_unpaid_payment = await Payment.get_last_unpaid_payment(user_id, session)
         last_unpaid_payment = last_unpaid_payment.scalar_one_or_none()
-
         if not last_unpaid_payment:
             await callback.message.answer(msg("paid", "1"))
             return

@@ -1,5 +1,7 @@
 import asyncio
 from aiogram import Dispatcher
+
+import handlers.transaction
 from data.config import bot
 from handlers import start
 from handlers.admin_add import admin_router
@@ -24,6 +26,7 @@ dp.include_router(catalog_navigation_router)
 dp.include_router(catalog_cart_router)
 dp.include_router(cart_quantity_router)
 dp.include_router(paid_router)
+dp.include_router(handlers.transaction.router)
 
 async def main():
     await global_init()
