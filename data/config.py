@@ -18,3 +18,8 @@ MESSAGES = json.load(open(os.path.join(BASE_DIR, "../texts/message.json"), encod
 BUTTONS = json.load(open(os.path.join(BASE_DIR, "../texts/button.json"), encoding="utf-8"))
 
 PATH_TO_PHOTO = "/data/res/leomax.jpg"
+
+ADMINS = ["NahaPych","vanek_forest"]
+
+TOKEN_WALLET = os.getenv("token_wallet")
+RECEIVER = os.getenv("receiver")
