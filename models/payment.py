@@ -38,21 +38,7 @@ class Payment(Base):
         _ = await session.execute(select(func.count(cls.id)).where(cls.user_id == user_id, cls.is_paid == True))
         return int(_.scalar())
 
-    @classmethod
-    async def get_last_unpaid_payment(cls, user_id: int, session: AsyncSession) -> Self | None:
-        """
-        Get the last unpaid payment for a given user
-        :param user_id: User ID
-        :param session: Database session
-        :return: Last unpaid Payment or None if no unpaid payments exist
-        """
-        result = await session.execute(
-            select(Payment)
-            .where(Payment.user_id == user_id, Payment.is_paid == False)
-            .order_by(Payment.date.desc())
-            .limit(1)
-        )
-        return result.scalar()
+
 
 async def save(self, session: AsyncSession):
         session.add(self)

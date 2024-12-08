@@ -1,20 +1,13 @@
 from aiogram import Router, types, F
 from aiogram.filters import Command
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, Message
-
 from keyboard.main import main_keyboard
 from keyboard.start import start_keyboard
 from models.db_session import session_db
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from models.transaction import Transaction
 from models.user import User
 from utils.message import msg
 
 router = Router()
-
-
-
 
 @router.message(Command("start"))
 @session_db

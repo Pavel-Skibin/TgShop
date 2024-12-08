@@ -1,2 +1,9 @@
 .venv/
 data/.env
+.idea/
+data/__pycache__
+filters/__pycache__
+handlers/__pycache__
+keyboard/__pycache__
+models/__pycache__
+utils/__pycache__

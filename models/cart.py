@@ -1,10 +1,8 @@
 from sqlalchemy import Column, ForeignKey, Integer, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import relationship, joinedload
-
 from models.db_session import Base
-from models.product import Product
-from models.user import User
+
 
 
 class Cart(Base):

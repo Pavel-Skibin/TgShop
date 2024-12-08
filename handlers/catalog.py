@@ -41,7 +41,6 @@ async def show_catalog(callback: CallbackQuery, session: AsyncSession, state: FS
     await callback.answer()
 
 
-
 @catalog_router.callback_query(F.data == "back_to_menu")
 async def back_to_menu(callback: CallbackQuery):
     """

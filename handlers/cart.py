@@ -20,7 +20,7 @@ cart_router = Router()
 @session_db
 async def show_cart_callback(callback: CallbackQuery, session: AsyncSession, state: FSMContext):
     """
-    Отображение корзины пользователя через callback_query.
+    Отображение корзины пользователя
     """
     user = await User.get_user(telegram_id=callback.from_user.id, session=session)
     if not user:
@@ -42,15 +42,12 @@ async def show_cart_callback(callback: CallbackQuery, session: AsyncSession, sta
         total_sum += total_price
 
         item_description_template = msg("cart", "item_description")
-
-
         caption = item_description_template.format(
             product_name=product.name,
             product_price=product.price,
             quantity=item.quantity,
             total_price=total_price
         )
-
         await callback.message.answer_photo(
             photo=product.image_url,
             caption=caption + "\n\n" + product.description,

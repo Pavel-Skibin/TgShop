@@ -6,13 +6,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from keyboard.catalog import create_product_keyboard
 from models.product import Product
 from models.db_session import session_db
+from utils.callback_factory import CatalogNavigationCallbackFactory
 from utils.message import msg
 
 catalog_navigation_router = Router()
 
-@catalog_navigation_router.callback_query(F.data.in_({"prev_product", "next_product"}))
+@catalog_navigation_router.callback_query(CatalogNavigationCallbackFactory.filter())
 @session_db
-async def navigate_products(callback: CallbackQuery, session: AsyncSession, state: FSMContext):
+async def navigate_products(callback: CallbackQuery, session: AsyncSession, state: FSMContext, callback_data: CatalogNavigationCallbackFactory):
     """
     Листание товаров вперед/назад.
     """
@@ -24,9 +25,9 @@ async def navigate_products(callback: CallbackQuery, session: AsyncSession, stat
     data = await state.get_data()
     current_index = data.get('current_index', 0)
 
-    if callback.data == "prev_product":
+    if callback_data.action == "prev":
         current_index = (current_index - 1) % len(products)
-    else:
+    elif callback_data.action == "next":
         current_index = (current_index + 1) % len(products)
 
     await state.update_data(current_index=current_index)

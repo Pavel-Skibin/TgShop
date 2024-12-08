@@ -1,16 +1,13 @@
 from datetime import datetime
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from models.cart import Cart
 from models.payment import Payment
-from models.transaction import Transaction
 from models.user import User
 from utils.generate_url import generate_url
 from keyboard.paid import create_payment_keyboard
-from utils.check_paying_user import check_paying_user
-from utils.message import msg
+
 
 
 async def send_total_sum_message(
@@ -39,7 +36,8 @@ async def send_total_sum_message(
     await session.commit()
 
     payment_url = generate_url(label=str(payment.id), amount=total_sum)
-    payment_keyboard = create_payment_keyboard(payment_url)
+
+    payment_keyboard = create_payment_keyboard(payment_url, payment_id=payment.id, sum=total_sum)
     new_text = f"Итоговая сумма: {total_sum} руб."
 
     if total_sum_message_id:
@@ -79,36 +77,3 @@ async def update_total_sum(callback: CallbackQuery, session: AsyncSession, state
     total_sum = sum(item.product.price * item.quantity for item in cart_items if item.product)
     await send_total_sum_message(total_sum, state, callback, session)
 
-
-async def handle_payment_confirmation(callback: CallbackQuery, session: AsyncSession, user_id: int):
-    try:
-        last_unpaid_payment = await Payment.get_last_unpaid_payment(user_id, session)
-        last_unpaid_payment = last_unpaid_payment.scalar_one_or_none()
-        if not last_unpaid_payment:
-            await callback.message.answer(msg("paid", "1"))
-            return
-
-        if last_unpaid_payment.is_paid:
-            await callback.message.answer(msg("paid", "2"))
-            return
-
-        if check_paying_user(str(last_unpaid_payment.id)):
-            async with session.begin_nested():
-                last_unpaid_payment = await session.merge(last_unpaid_payment)
-                last_unpaid_payment.is_paid = True
-                transaction = Transaction(
-                    user_id=last_unpaid_payment.user_id,
-                    sum=last_unpaid_payment.sum,
-                    type="income",
-                    date=datetime.now()
-                )
-                session.add(transaction)
-                await session.commit()
-
-            await callback.message.answer(msg("paid", "3"))
-        else:
-            await callback.message.answer(msg("paid", "4"))
-
-    except Exception as e:
-        await session.rollback()
-        await callback.message.answer(msg("paid", "5").format(error=str(e)))

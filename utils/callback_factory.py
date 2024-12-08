@@ -5,9 +5,7 @@ class CatalogNavigationCallbackFactory(CallbackData, prefix="navigate"):
     action: str  # "prev_product" или "next_product"
 
 
-class AddToCartCallbackFactory(CallbackData, prefix="add_to_cart"):
-    product_id: int
 
-
-class BackToMenuCallbackFactory(CallbackData, prefix="back_to_menu"):
-    pass
+class PaidCallbackFactory(CallbackData, prefix="paid"):
+    payment_id: int
+    sum: int
